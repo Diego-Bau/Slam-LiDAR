@@ -1,0 +1,6 @@
+parameters:
+ topic_name1: "poseupdate"
+ buffer_size1: 1
+ topic_name2: "scan"
+ buffer_size2: 10
+
