@@ -1,0 +1,34 @@
+//Se incluyen librerías
+#include <ros/ros.h>// libreriías de ROS
+#include <std_msgs/String.h>//Librería para mensaje de tipo string
+#include <string>
+using namespace std;
+
+int main(int argc, char **argv)
+{	string topico = "chatter";//variable del nombre del topico
+	int buffer_size = 1;//tamaño del buffer
+	
+	//Configuración 
+	ros::init(argc, argv, "publisher1");//se inicializa el nodo con el maestro
+	ros::NodeHandle nh;//se inicializan las comunicaciones del nodo
+
+	/*nh.getParam("publisher/parametros_publisher1/topic_name", topico);//Se obtienie nombre del tópico
+	nh.getParam("publisher/parametros_publisher1/buffer_size", buffer_size);//Se obtiene tamaño de buffer*/
+
+	ros::Publisher publicar = 
+	nh.advertise<std_msgs::String>(topico, buffer_size);//se crea instancia para publicar, se publica por el tópico chat y un mensaje a la vez
+
+	std_msgs::String msg;//Se instancia clase de tipo de mensaje a enviar 
+	msg.data = "H";//Se especifica mensaje a enviar 
+	
+	ros::Rate loopRate(10);//Se establece una pausa de 10 hz --> 100 ms
+	
+	while(ros::ok())
+	{
+		publicar.publish(msg);//Se publica mensaje por tópico
+		ROS_INFO_STREAM(msg.data);//Se imprime dato enviado por tópico
+		loopRate.sleep();//Se esperan 100 ms
+	}
+	return 0;
+}
+

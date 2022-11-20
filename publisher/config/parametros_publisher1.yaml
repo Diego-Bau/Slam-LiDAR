@@ -1,0 +1,4 @@
+parametros_publisher1:
+ topic_name: "chat"
+ buffer_size: 1
+

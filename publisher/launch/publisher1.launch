@@ -1,0 +1,5 @@
+<launch>
+	<node name="publisher1" pkg="publisher" type="publisher1" output="screen">
+		<rosparam command="load" file="$(find publisher)/config/parametros_publisher1.yaml"/>
+	</node>
+</launch>

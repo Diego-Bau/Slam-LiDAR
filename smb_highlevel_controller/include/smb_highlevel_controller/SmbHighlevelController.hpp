@@ -30,6 +30,9 @@ private: //--> atributos
 	ros::NodeHandle nodeHandle;//objeto de clase nodehandle
 	ros::Subscriber subscriber1;//objeto de clase subscriber1 (pos)
 	ros::Subscriber subscriber2;//objeto de clase subscriber2 (scan)
+	ros::Publisher publisher;
+
+	std_msgs::String msg_s;//Se instancia clase de tipo de mensaje a enviar 
 
 	void Laser_Callback(const sensor_msgs::LaserScan &msg);//funcion callback para recibir mensaje de tipo Laser
 
