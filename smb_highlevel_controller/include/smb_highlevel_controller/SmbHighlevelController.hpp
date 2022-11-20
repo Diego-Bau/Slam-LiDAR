@@ -4,9 +4,12 @@
 //Se incluyen librerias
 #include <ros/ros.h>//Librerias de ROS
 #include <sensor_msgs/LaserScan.h>//Librerias de mensaje de interes
-#include <std_msgs/String.h>
+#include <std_msgs/Int16.h>
 #include <geometry_msgs/PoseWithCovarianceStamped.h>
 #include <vector>
+#define indice_0 190
+#define indice_180 550
+#define dist_s 0.3 //distancia de seguridad (30 cm)
 
 namespace smb_highlevel_controller {
 
@@ -32,7 +35,7 @@ private: //--> atributos
 	ros::Subscriber subscriber2;//objeto de clase subscriber2 (scan)
 	ros::Publisher publisher;
 
-	std_msgs::String msg_s;//Se instancia clase de tipo de mensaje a enviar 
+	std_msgs::Int16 msg_s;//Se instancia clase de tipo de mensaje a enviar 
 
 	void Laser_Callback(const sensor_msgs::LaserScan &msg);//funcion callback para recibir mensaje de tipo Laser
 

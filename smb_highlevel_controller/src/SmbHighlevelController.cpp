@@ -22,7 +22,7 @@ SmbHighlevelController::SmbHighlevelController(ros::NodeHandle& nodeHandle) :
 	}
 
 	//Se crea publisher
-  publisher = nodeHandle.advertise<std_msgs::String>("chatter", 1);
+  publisher = nodeHandle.advertise<std_msgs::Int16>("chatter", 1);
 
 	//Se crea subscriptor
 	subscriber1 = nodeHandle.subscribe(topico1, buffer_size1, &SmbHighlevelController::pose_Callback, this);
@@ -46,29 +46,30 @@ void SmbHighlevelController::Laser_Callback(const sensor_msgs::LaserScan &msg)
 	auto min_dis = std::min_element(msg.ranges.cbegin(), msg.ranges.cend());
 	int indice = min_dis - msg.ranges.cbegin();
 	ROS_INFO_STREAM("Distancia min (m): " << *min_dis);
-	ROS_INFO_STREAM("INDICE: " << indice);
+	//ROS_INFO_STREAM("INDICE: " << indice);
 
-	if (indice>=190 && indice<=550) //es el rango de 180° frontal
+	if (indice>=indice_0 && indice<=indice_180) //es el rango de 180° frontal
 	{
-		if (*min_dis<=0.3)
+		if (*min_dis<=dist_s)
 		{
 			ROS_INFO_STREAM("DETENTE");
-			msg_s.data = "S";//Se especifica mensaje a enviar 
+			msg_s.data = 0;//Se especifica mensaje a enviar 
 
 		}
 		else{
 			ROS_INFO_STREAM("AVANZA");
-			msg_s.data = "F";//Se especifica mensaje a enviar 
+			msg_s.data = 1;//Se especifica mensaje a enviar 
 		}
 	}
 	else
 	{
 		ROS_INFO_STREAM("AVANZA");
-		msg_s.data = "F";//Se especifica mensaje a enviar 
+		msg_s.data = 1;//Se especifica mensaje a enviar 
 	}
 	publisher.publish(msg_s);
 	//ROS_INFO_STREAM("SCAN: " << msg.angle_increment);
 }
+/*
 
 /*
 void SmbHighlevelController::Laser_Callback_vector(const std::vector<float> &msg)
@@ -79,11 +80,11 @@ void SmbHighlevelController::Laser_Callback_vector(const std::vector<float> &msg
 
 void SmbHighlevelController::pose_Callback(const geometry_msgs::PoseWithCovarianceStamped &msg)
 {
-	/*
-	ROS_INFO_STREAM("Posición en x: " << msg.pose.pose.position.x);//se imprime dato recibidio
-	ROS_INFO_STREAM("Posición en y: " << msg.pose.pose.position.y);
-	ROS_INFO_STREAM("Orientación: " << msg.pose.pose.orientation.z);
-*/
+
+	//ROS_INFO_STREAM("Posicion en x: " << msg.pose.pose.position.x);//se imprime dato recibidio
+	//ROS_INFO_STREAM("Posicion en y: " << msg.pose.pose.position.y);
+	//ROS_INFO_STREAM("Orientacion: " << msg.pose.pose.orientation.z);
+
 	//ROS_INFO_STREAM(msg.pose.position);
 }
 
