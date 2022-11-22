@@ -7,10 +7,9 @@
 #include <std_msgs/Int16.h>
 #include <geometry_msgs/PoseWithCovarianceStamped.h>
 #include <vector>
-#define indice_0 190
-#define indice_180 550
-#define dist_s 0.3 //distancia de seguridad (30 cm)
-
+#define indice_0 210//190
+#define indice_180 530//550
+#define dist_s 0.65 //distancia de seguridad (m)
 namespace smb_highlevel_controller {
 
 /*!

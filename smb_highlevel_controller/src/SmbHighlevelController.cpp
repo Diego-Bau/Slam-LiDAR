@@ -46,20 +46,21 @@ void SmbHighlevelController::Laser_Callback(const sensor_msgs::LaserScan &msg)
 	auto min_dis = std::min_element(msg.ranges.cbegin(), msg.ranges.cend());
 	int indice = min_dis - msg.ranges.cbegin();
 	ROS_INFO_STREAM("Distancia min (m): " << *min_dis);
-	//ROS_INFO_STREAM("INDICE: " << indice);
+	ROS_INFO_STREAM("INDICE: " << indice);
 
 	if (indice>=indice_0 && indice<=indice_180) //es el rango de 180° frontal
 	{
 		if (*min_dis<=dist_s)
 		{
 			ROS_INFO_STREAM("DETENTE");
-			msg_s.data = 0;//Se especifica mensaje a enviar 
+			msg_s.data = 3;//Se especifica mensaje a enviar 
 
 		}
 		else{
 			ROS_INFO_STREAM("AVANZA");
-			msg_s.data = 1;//Se especifica mensaje a enviar 
-		}
+			msg_s.data = 1;//Se especifica mensaje a enviar
+
+					}
 	}
 	else
 	{
