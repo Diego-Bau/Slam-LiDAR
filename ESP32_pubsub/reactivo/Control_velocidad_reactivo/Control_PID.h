@@ -20,8 +20,8 @@ el código del control*/
 #define pin_cB_e2 17//Pin del canal B del encoder 2 cable negro 
 #define canal_PWM1m2  2//Canal del pwm1 del motor 2
 #define canal_PWM2m2  3//Canal del pwm2 del motor 2
-#define pin_PWM1m2 18//Pin para el PWM1 del motor 2 cable azul --> sentido antihorario
-#define pin_PWM2m2 19//Pin para el PWM2 del motor 2 cable blanco --> sentido horario
+#define pin_PWM1m2 19//Pin para el PWM1 del motor 2 cable azul --> sentido antihorario
+#define pin_PWM2m2 21//Pin para el PWM2 del motor 2 cable blanco --> sentido horario
 
 //----Control----
 //constantes
@@ -57,7 +57,7 @@ el código del control*/
 #define Kp_bf 450//Ganancia proporcional para el controlador
 #define Kd_bf 8.0//Ganancia derivativa para el controlador
 #define Ki_bf 750//Ganancia integral para el controlador
-#define frec_per_bf 150//frecuencia de perturbación baja frecuencia (hz)
+#define frec_per_bf 175//frecuencia de perturbación baja frecuencia (hz)
 #define lim_max_iedt_bf 2.7//Límite superior de la sumatoria del error
 
 //Declaración de variables globales

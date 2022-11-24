@@ -1,19 +1,21 @@
 //Librerías para la comunicación serial
 #include <ros.h>//Librerías de ROS
-#include <std_msgs/Int16.h>//Librería del tipo de mensaje a recibir
+#include <geometry_msgs/Twist.h>//Librería del tipo de mensaje a recibir
 #include "Control_PID.h"//Parámetros del control PID
 #include "Bluetooth.h"//Parametros del sistema físico del robot 
 
 ros::NodeHandle  nh;//Se inicializan comunicaciones del nodo
 
 //Función de callback
-void messageCb( const std_msgs::Int16& toggle_msg){
+void messageCb( const geometry_msgs::Twist& toggle_msg){
   digitalWrite(2, HIGH-digitalRead(2));   //Al recibr dato prende y apaga led --> acknowledge
-  int mensaje=  toggle_msg.data;
+  float vd =  toggle_msg.linear.x;//Velocidad tralacional de referencia
+  float omegad = toggle_msg.angular.z;//Velocidad angular de referencia
+  
 
   //switch case control remoto
   
-  switch (mensaje)
+  /*switch (mensaje)
   {
     case 0://Stop el robot no avanza --> no se presiona ningún botón 
       vd = 0;//velocidad traslacional deseada
@@ -40,10 +42,10 @@ void messageCb( const std_msgs::Int16& toggle_msg){
       vd = 0;//velocidad traslacional deseada
       omegad = 0;//velocidad angular deseada 
       break;
-  }
+  }*/
 }
 
-ros::Subscriber<std_msgs::Int16> sub("chatter", messageCb );//Se configura el subscriptor
+ros::Subscriber<geometry_msgs::Twist> sub("chatter", messageCb );//Se configura el subscriptor
 
 //Configuración de ESP32
 void setup()
@@ -136,8 +138,9 @@ void loop()
     double frecuenciad2_ = (frecuenciad2 >= 0)? frecuenciad2: -frecuenciad2;//en caso de ser negativa la vuelvo positiva
     frecuenciad1_ = (frecuenciad1_ >= 2.2)? 2.2 : frecuenciad1_;//se satura referencia
     frecuenciad2_ = (frecuenciad2_ >= 2.2)? 2.2 : frecuenciad2_;//se satura referencia
-    control_PID(1, frecuencia1, frecuenciad1_);//Se aplica el control a motor 1
     control_PID(2, frecuencia2, frecuenciad2_);//Se aplica el control a motor 2
+    control_PID(1, frecuencia1, frecuenciad1_);//Se aplica el control a motor 1
+
 
     //----Recursividad----
     tiempo_previo = tiempo_actual;//Se actualiza el tiempo de activación de la última bandera

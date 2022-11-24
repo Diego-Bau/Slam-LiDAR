@@ -10,6 +10,10 @@ find_package(catkin REQUIRED COMPONENTS
   sensor_msgs
   std_msgs
   geometry_msgs
+  visualization_msgs
+  gazebo_msgs
+
+
 )
 
 ###################################
@@ -23,6 +27,9 @@ catkin_package(
     sensor_msgs
     std_msgs
     geometry_msgs
+    visualization_msgs
+    gazebo_msgs
+
 )
 
 ###########
