@@ -136,8 +136,9 @@ void loop()
     double frecuenciad2_ = (frecuenciad2 >= 0)? frecuenciad2: -frecuenciad2;//en caso de ser negativa la vuelvo positiva
     frecuenciad1_ = (frecuenciad1_ >= 2.2)? 2.2 : frecuenciad1_;//se satura referencia
     frecuenciad2_ = (frecuenciad2_ >= 2.2)? 2.2 : frecuenciad2_;//se satura referencia
-    control_PID(1, frecuencia1, frecuenciad1_);//Se aplica el control a motor 1
     control_PID(2, frecuencia2, frecuenciad2_);//Se aplica el control a motor 2
+    control_PID(1, frecuencia1, frecuenciad1_);//Se aplica el control a motor 1
+
 
     //----Recursividad----
     tiempo_previo = tiempo_actual;//Se actualiza el tiempo de activación de la última bandera

@@ -18,7 +18,7 @@
 #define l .1475 //distancia del centro geometrico del robot al centro de cada rueda en m
 #define r .04 //radio de la rueda del motor en m
 #define factor_limit 0.75//factor para limitar las velocidades traslacionales y angulares al girar
-#define porcentaje_v 30
+#define porcentaje_v 15 //20
 
 //Definición de variables globales
 char data;//datos recibidos por bluetooth

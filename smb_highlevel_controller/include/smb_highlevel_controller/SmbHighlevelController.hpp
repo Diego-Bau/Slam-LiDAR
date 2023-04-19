@@ -7,12 +7,24 @@
 #include <std_msgs/Int16.h>
 #include <geometry_msgs/PoseWithCovarianceStamped.h>
 #include <vector>
-#define indice_0 250   //210 //190
-#define indice_180 500  //530//550
-#define dist_s 0.8 //distancia de seguridad (m)
+#define indice_0 200//250   //210 //190
+#define indice_180 510//500  //530//550
+#define indice_90 390  //ENFRENT DEL ROBOT
+
+#define IZQUIERDA_I 525 //475
+#define DERECHA_I 235 //285
+#define ENFRENTE_I 380
+#define RANGO_I 1  //RANGO DE DETECCIÓN +- //5
+#define RANGO_E 165  //RANGO DE DETECCIÓN +- //150
+#define dis_pared 0.69
+#define dis_paredE 1
+
+
+
+#define dist_s .4 //distancia de seguridad (m)
 namespace smb_highlevel_controller {
 
-/*!
+/*
  * Class containing the Husky Highlevel Controller
  */
 class SmbHighlevelController { //Clase de controlador
