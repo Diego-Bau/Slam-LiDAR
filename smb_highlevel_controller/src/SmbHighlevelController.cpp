@@ -7,7 +7,7 @@ namespace smb_highlevel_controller
 {
 
 SmbHighlevelController::SmbHighlevelController(ros::NodeHandle& nodeHandle) :
-  nodeHandle(nodeHandle),msg_s(), subscriber1(), subscriber2(), publisher()//Definicion del constructor 
+  nodeHandle(nodeHandle),msg_v(), subscriber1(), subscriber2(), subscriber3(), publisher(), viz_pub()//Definicion del constructor 
 {
 	//Configguracion de parametros
 	string topico1, topico2;//nombre del topico
@@ -22,12 +22,17 @@ SmbHighlevelController::SmbHighlevelController(ros::NodeHandle& nodeHandle) :
 	}
 
 	//Se crea publisher
-  publisher = nodeHandle.advertise<std_msgs::Int16>("chatter", 1);
+  publisher = nodeHandle.advertise<geometry_msgs::Twist>("chatter", 1);
+  viz_pub = nodeHandle.advertise<visualization_msgs::Marker>("visualization_marker", 0);//se crea publisher para
+
+  	//Marker del pilar en Rviz
+	init_Marker();//se inicializa el marker
 
 	//Se crea subscriptor
 	subscriber1 = nodeHandle.subscribe(topico1, buffer_size1, &SmbHighlevelController::pose_Callback, this);
 	subscriber2 = nodeHandle.subscribe(topico2, buffer_size2, &SmbHighlevelController::Laser_Callback, this);
-	
+	subscriber3 = nodeHandle.subscribe("gazebo/model_states", 1, &SmbHighlevelController::marker_Callback, this);
+
   	
 	ROS_INFO("SmbHighlevelController cargado exitosamente");
 }
@@ -40,12 +45,18 @@ SmbHighlevelController::~SmbHighlevelController()//Definicion del destructor
 //Definicion de funcion callback
 void SmbHighlevelController::Laser_Callback(const sensor_msgs::LaserScan &msg)
 {	
+<<<<<<< HEAD
 	
+=======
+
+	/*
+>>>>>>> 7691c7499d51be87efc09bc17cc864b01d23615c
 	//int cuenta = 3;
 	//ROS_INFO_STREAM(msg.data << cuenta);//se imprime dato recibidio
 
 	auto min_dis = std::min_element(msg.ranges.cbegin(), msg.ranges.cend());
 	int indice = min_dis - msg.ranges.cbegin();
+<<<<<<< HEAD
 	ROS_INFO_STREAM("Distancia min (m): " << *min_dis);
 	ROS_INFO_STREAM("INDICE: " << indice);
 	//ROS_INFO_STREAM("promedioEnf: " << msg.ranges.size());
@@ -60,6 +71,22 @@ float v_enfrente[longitudDeArregloE];
 
 //Declaración de indicadores de detección de paredes
 bool p_der = false, p_izq = false, p_front = false;
+=======
+	//ROS_INFO_STREAM("Distancia min (m): " << *min_dis);
+	//ROS_INFO_STREAM("INDICE: " << indice);
+
+	if (indice>=indice_0 && indice<=indice_180) //es el rango de 180° frontal
+	{
+		if (*min_dis<=dist_s)
+		{
+			//ROS_INFO_STREAM("DETENTE");
+			msg_s.data = 3;//Se especifica mensaje a enviar 
+
+		}
+		else{
+			//ROS_INFO_STREAM("AVANZA");
+			msg_s.data = 1;//Se especifica mensaje a enviar
+>>>>>>> 7691c7499d51be87efc09bc17cc864b01d23615c
 
 //Adquisición de datos del vector de lidar
 for (int i=0; i <= RANGO_I * 2 + 1; i++){
@@ -158,6 +185,7 @@ ROS_INFO_STREAM("3");
 	else
 	{
 		//ROS_INFO_STREAM("AVANZA");
+<<<<<<< HEAD
 		msg_s.data = 0;//Se especifica mensaje a enviar
 		//ROS_INFO_STREAM("DETENTE");
 
@@ -175,6 +203,17 @@ void SmbHighlevelController::Laser_Callback_vector(const std::vector<float> &msg
 }
 */
 }
+=======
+		msg_s.data = 1;//Se especifica mensaje a enviar 
+	}
+	//publisher.publish(msg_s);
+	
+	//ROS_INFO_STREAM("SCAN: " << msg.angle_increment);
+}
+*/
+}	
+
+>>>>>>> 7691c7499d51be87efc09bc17cc864b01d23615c
 void SmbHighlevelController::pose_Callback(const geometry_msgs::PoseWithCovarianceStamped &msg)
 {
 
@@ -183,7 +222,88 @@ void SmbHighlevelController::pose_Callback(const geometry_msgs::PoseWithCovarian
 	//ROS_INFO_STREAM("Orientacion: " << msg.pose.pose.orientation.z);
 
 	//ROS_INFO_STREAM(msg.pose.position);
+
+	//variables de posición robot
+	double posi_robot[2]= {msg.pose.pose.position.x, msg.pose.pose.position.y}; // posición del robot
+ 	double t= msg.pose.pose.orientation.z; //theta robot
+	//Se calcula el error
+	double d= sqrt(pow(marker_pos[0]- posi_robot[0],2)+pow(marker_pos[1]-posi_robot[1],2)); //distancia del error
+	double td= atan2(marker_pos[1]-posi_robot[1], marker_pos[0]-posi_robot[0]);  //theta del error
+
+	double te= t - td;
+
+	//CONDICIONALES PARA TOMAR EL ANGULO MÁS PEQUEÑO. (SE ARREGLA LA DISCONTINUIDAD DE LA TANGENTE INVERSA).
+	if (te > pi)  
+	{
+		te = te-2*pi;
+	}
+
+	else if (te < -pi)
+	{
+		te = te + 2*pi;
+	}
+
+	double v= P_v * d;     //control proporcional de la velocidad traslacional
+	double omega= -P_w * te;     //control proporcional de la velocidad angular
+
+	ROS_INFO_STREAM("velocidad: " << v);
+	ROS_INFO_STREAM("omega: " << omega);
+
+	msg_v.linear.x= v;
+	msg_v.angular.z= omega;
+
+	publisher.publish(msg_v);
+
+}
+void SmbHighlevelController::marker_Callback(const gazebo_msgs::ModelStates &msg)
+{
+	marker_pos[0]= msg.pose[1].position.x;
+	marker_pos[1]= msg.pose[1].position.y;
+
+	viz_marker();
+	//ROS_INFO_STREAM("POSE: " << msg.pose[1].position.x);
 }
 
+void SmbHighlevelController::viz_marker()
+{
+	marker.header.frame_id = "map";
+	marker.header.stamp = ros::Time();
+	marker.ns = "pilar";
+	marker.id = 1080;
+	marker.type = visualization_msgs::Marker::SPHERE;
+	marker.action = visualization_msgs::Marker::ADD;
+
+	marker.pose.position.x = marker_pos[0];//posicion en x
+	marker.pose.position.y = marker_pos[1];//posicion en y 
+	marker.pose.position.z = 0.1;//posicion en z
+	viz_pub.publish(marker);//se publica mensaje de posicion 
+}
+
+
+void SmbHighlevelController::init_Marker()
+{
+	marker.header.frame_id = "maps";
+	marker.header.stamp = ros::Time();
+	marker.ns = "pilar";
+	marker.id = 1080;
+	marker.type = visualization_msgs::Marker::SPHERE;
+	marker.action = visualization_msgs::Marker::ADD;
+	//posicion
+	marker.pose.position.x = 5 ;//coordenada en x
+	marker.pose.position.y = 0 ;//coordenada en y 
+	marker.pose.position.z = 0.1;//coordenada en z
+	
+	//escala
+	marker.scale.x = .2;//escala en x
+	marker.scale.y = .2;//escala en y 
+	marker.scale.z = .2;//escala en z
+	
+	//color
+	marker.color.a = 1.0;//alpha
+	marker.color.r = 1.0;//canal rojo
+	marker.color.g = 1.0;//canal verde
+	marker.color.b = 0.0;//canal azul	
+	viz_pub.publish(marker);//se publica mensaje de posicion 	
+}
 
 }

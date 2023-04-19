@@ -1,19 +1,21 @@
 //Librerías para la comunicación serial
 #include <ros.h>//Librerías de ROS
-#include <std_msgs/Int16.h>//Librería del tipo de mensaje a recibir
+#include <geometry_msgs/Twist.h>//Librería del tipo de mensaje a recibir
 #include "Control_PID.h"//Parámetros del control PID
 #include "Bluetooth.h"//Parametros del sistema físico del robot 
 
 ros::NodeHandle  nh;//Se inicializan comunicaciones del nodo
 
 //Función de callback
-void messageCb( const std_msgs::Int16& toggle_msg){
+void messageCb( const geometry_msgs::Twist& toggle_msg){
   digitalWrite(2, HIGH-digitalRead(2));   //Al recibr dato prende y apaga led --> acknowledge
-  int mensaje=  toggle_msg.data;
+  float vd =  toggle_msg.linear.x;//Velocidad tralacional de referencia
+  float omegad = toggle_msg.angular.z;//Velocidad angular de referencia
+  
 
   //switch case control remoto
   
-  switch (mensaje)
+  /*switch (mensaje)
   {
     case 0://Stop el robot no avanza --> no se presiona ningún botón 
       vd = 0;//velocidad traslacional deseada
@@ -40,10 +42,10 @@ void messageCb( const std_msgs::Int16& toggle_msg){
       vd = 0;//velocidad traslacional deseada
       omegad = 0;//velocidad angular deseada 
       break;
-  }
+  }*/
 }
 
-ros::Subscriber<std_msgs::Int16> sub("chatter", messageCb );//Se configura el subscriptor
+ros::Subscriber<geometry_msgs::Twist> sub("chatter", messageCb );//Se configura el subscriptor
 
 //Configuración de ESP32
 void setup()
